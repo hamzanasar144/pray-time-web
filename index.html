@@ -108,6 +108,15 @@
             font-weight: bold;
             color: #1a237e;
         }
+
+        .error {
+            color: #ff0000;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -117,6 +126,7 @@
     </label>
     <br>
     <button onclick="checkPrayerTimes()">Check Prayer Times</button>
+    <div id="errorMessage" class="error"></div>
 
     <div class="prayer-container">
         <h2 id="locationText"></h2>
@@ -145,7 +155,16 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         function checkPrayerTimes(){
-            let city = document.getElementById("cityName").value
+            let city = document.getElementById("cityName").value;
+            const errorDiv = document.getElementById("errorMessage");
+            
+            if (!city) {
+                errorDiv.style.display = "block";
+                errorDiv.innerText = "Please enter a city name";
+                return;
+            }
+
+            errorDiv.style.display = "none";
             
             axios.get(`http://api.aladhan.com/v1/timingsByCity?city=${city}&country=&method=1`)
             .then((response) => {
@@ -163,7 +182,8 @@
             })
             .catch((error) => {
                 console.log(error);
-                alert("Error fetching prayer times. Please check city name and try again.");
+                errorDiv.style.display = "block";
+                errorDiv.innerText = "Error fetching prayer times. Please check city name and try again.";
             })
         }
 
